@@ -57,28 +57,63 @@ always_comb begin
             alu_ctrl = alu_slts;    
         end
         /* SLTU */
-        {3'b011, 7'b0110011}: begin
+        {3'b011, 7'b0110011},
+        /* STLIU */
+        {3'b011, 7'b0010011}: begin
             alu_ctrl = alu_sltu;    
         end
         /* XOR */
-        {3'b100, 7'b0110011}: begin
+        {3'b100, 7'b0110011},
+        /* XORI */
+        {3'b100, 7'b0010011}: begin
             alu_ctrl = alu_xor;    
         end
         /* SRL, SRA */
-        {3'b101, 7'b0110011}: begin
+        {3'b101, 7'b0110011},
+        /* SRLI, SRAI */
+        {3'b101, 7'b0010011}: begin
             if(funct7[5] == 0)
                 alu_ctrl = alu_srs;    
             else 
                 alu_ctrl = alu_sru;
         end
         /* OR */
-        {3'b110, 7'b0110011}: begin
+        {3'b110, 7'b0110011},
+        /* ORI */
+        {3'b110, 7'b0010011}: begin
             alu_ctrl = alu_or;    
         end
         /* AND */
+        {3'b111, 7'b0110011},
+        /* ANDI */
         {3'b111, 7'b0110011}: begin
             alu_ctrl = alu_and;    
         end
+        /* BEQ */
+        {3'b000, 7'b1100011}: begin
+            alu_ctrl = alu_beq;
+        end
+        /* BNE */
+        {3'b001, 7'b1100011}: begin
+            alu_ctrl = alu_bne;
+        end
+        /* BLT */
+        {3'b100, 7'b1100011}: begin
+            alu_ctrl = alu_blts;
+        end
+        /* BGE */
+        {3'b101, 7'b1100011}: begin
+            alu_ctrl = alu_bges;
+        end
+        /* BLTU */
+        {3'b110, 7'b1100011}: begin
+            alu_ctrl = alu_bltu;
+        end
+        /* BGEU */
+        {3'b111, 7'b1100011}: begin
+            alu_ctrl = alu_bgeu;
+        end
+        /* AUIPC, LUI, JAL */
         default: 
             alu_ctrl = alu_nop;
     endcase
