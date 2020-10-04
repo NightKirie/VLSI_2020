@@ -17,7 +17,7 @@ module Control_Unit (
     /* 0: no DM read, 1: DM read */
     output reg mem_r,
     /* 0: no DM write, 1: DM write */
-    output reg mem_w
+    output reg mem_w,
 );
 
 always_comb begin
