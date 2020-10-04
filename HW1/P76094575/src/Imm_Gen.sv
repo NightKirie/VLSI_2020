@@ -1,4 +1,4 @@
-module Immediate_Generator (
+module Imm_Gen (
     input imm_sel,
     input [31:0] imm_in,
     output [31:0] imm_out;
