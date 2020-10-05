@@ -2,7 +2,7 @@ module ALU_Control (
     input [6:0] funct7,
     input [2:0] funct3,
     input [6:0] opcode,
-    output reg [4:0] alu_ctrl
+    output logic [4:0] alu_ctrl
 );
 
 parameter [4:0] alu_nop = 5'd0,

@@ -1,7 +1,7 @@
 module Imm_Gen (
     input imm_sel,
     input [31:0] imm_in,
-    output [31:0] imm_out;
+    output logic [31:0] imm_out;
 );
 
 always_comb begin

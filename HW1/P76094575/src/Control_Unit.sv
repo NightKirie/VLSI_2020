@@ -1,23 +1,23 @@
 module Control_Unit (
     input [6:0] opcode,
     /* 0: pc, 1: alu_out */
-    output reg rd_src,  
+    output logic rd_src,  
     /* 0: no branch, 1: branch */
-    output reg branch_en,
+    output logic branch_en,
     /* 0: reg, 1: imm */
-    output reg alu_in2_sel,
+    output logic alu_in2_sel,
     /* 0: pc+4, 1: pc+imm */
-    output reg pc_src,
+    output logic pc_src,
     /* 0: rd, 1: DM */
-    output reg wb_sel,
+    output logic wb_sel,
     /* 0: no imm, 1: imm */
-    output reg imm_sel,
+    output logic imm_sel,
     /* 0: no register write back, 1: register write back */
-    output reg reg_w,
+    output logic reg_w,
     /* 0: no DM read, 1: DM read */
-    output reg mem_r,
+    output logic mem_r,
     /* 0: no DM write, 1: DM write */
-    output reg mem_w,
+    output logic mem_w,
 );
 
 always_comb begin

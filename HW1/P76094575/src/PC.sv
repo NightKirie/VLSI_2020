@@ -2,7 +2,7 @@ module PC (
     input clk,
     input rst
     input [31:0] pc_in
-    output reg [31:0] pc_out
+    output logic [31:0] pc_out
 );
 
 always_ff @(posedge clk, posedge rst) begin

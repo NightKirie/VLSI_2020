@@ -5,9 +5,9 @@ module Register (
     input [4:0] rr2_addr,
     input [4:0] wr_addr,
     input [31:0] wd,
-    input reg_w,
-    output [31:0] rr1_data,
-    output [31:0] rr2_data
+    input reg_w, 
+    output logic [31:0] rr1_data,
+    output logic [31:0] rr2_data
 );
 
 reg [31:0] reg_data [0:31];

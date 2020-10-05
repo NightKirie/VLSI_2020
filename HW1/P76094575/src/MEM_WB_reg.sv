@@ -6,11 +6,11 @@ module MEM_WB_reg (
     input [31:0] rd_data_in,
     input [31:0] rb_data_in,
     input [4:0] wr_addr_in,
-    output reg wb_sel_out,
-    output reg reg_w_out,
-    output reg [31:0] rd_data_out,
-    output reg [31:0] rb_data_out,
-    output reg [31:0] wr_addr_out
+    output logic wb_sel_out,
+    output logic reg_w_out,
+    output logic [31:0] rd_data_out,
+    output logic [31:0] rb_data_out,
+    output logic [31:0] wr_addr_out
 );
 
 always_ff @(posedge clk, posedge rst) begin

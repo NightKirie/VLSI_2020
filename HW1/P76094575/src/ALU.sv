@@ -2,8 +2,8 @@ module ALU_Control (
     input [4:0] alu_ctrl,
     input [31:0] alu_in1,
     input [31:0] alu_in2,
-    output reg [31:0] alu_out,
-    output reg branch_flag
+    output logic [31:0] alu_out,
+    output logic branch_flag
 );
 
 parameter [4:0] alu_nop = 5'd0,
@@ -60,15 +60,15 @@ always_comb begin
             branch_flag = 32'd0;
         end 
         alu_and: begin
-            alu_out = (alu_in1 && alu_in2) ? 1 : 0;
+            alu_out = alu_in1 & alu_in2;
             branch_flag = 0;
         end 
         alu_or: begin
-            alu_out = (alu_in1 || alu_in2) ? 1 : 0;
+            alu_out = alu_in1 | alu_in2;
             branch_flag = 0;
         end 
         alu_xor: begin
-            alu_out = (alu_in1 ^ alu_in2) ? 1 : 0;
+            alu_out = alu_in1 ^ alu_in2;
             branch_flag = 0;
         end 
         alu_beq: begin

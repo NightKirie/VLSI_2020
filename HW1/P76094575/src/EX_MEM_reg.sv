@@ -8,17 +8,17 @@ module EX_MEM_reg (
     input mem_w_in,
     input [31:0] pc_in,
     input [31:0] alu_in,
-    input [31:0] rr2_forward_in,
+    input [31:0] rr2_data_in,
     input [4:0] wr_addr_in,
-    output reg rd_src_out,
-    output reg wb_sel_out,
-    output reg reg_w_out,
-    output reg mem_r_out,
-    output reg mem_w_out,
-    output reg [31:0] pc_out,
-    output reg [31:0] alu_out,
-    output reg [31:0] rr2_forward_out,
-    output reg [4:0] wr_addr_out,
+    output logic rd_src_out,
+    output logic wb_sel_out,
+    output logic reg_w_out,
+    output logic mem_r_out,
+    output logic mem_w_out,
+    output logic [31:0] pc_out,
+    output logic [31:0] alu_out,
+    output logic [31:0] rr2_data_out,
+    output logic [4:0] wr_addr_out,
 );
     
 always_ff @(posedge clk, posedge rst) begin
@@ -30,7 +30,7 @@ always_ff @(posedge clk, posedge rst) begin
         mem_w_out <= 0;
         pc_out <= 32'd0;
         alu_out <= 32'd0;
-        rr2_forward_out <= 32'd0;
+        rr2_data_out <= 32'd0;
         wr_addr_out <= 5'd0;
     end
     else begin
@@ -41,7 +41,7 @@ always_ff @(posedge clk, posedge rst) begin
         mem_w_out <= mem_w_in;
         pc_out <= pc_in;
         alu_out <= alu_out;
-        rr2_forward_out <= rr2_forward_in;
+        rr2_data_out <= rr2_data_in;
         wr_addr_out <= we_addr_out;
     end
 end
