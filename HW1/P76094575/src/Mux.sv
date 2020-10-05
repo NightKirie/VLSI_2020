@@ -25,14 +25,16 @@ module Mux_2_32_1_32 (
     input sel,
     output logic [31:0] out
 );
-    always_comb begin
-        case (sel)
-            0:
-                out = in1;
-            1:
-                out = in2;
-        endcase
-    end    
+
+always_comb begin
+    case (sel)
+        0:
+            out = in1;
+        1:
+            out = in2;
+    endcase
+end 
+   
 endmodule
     
 endmodule

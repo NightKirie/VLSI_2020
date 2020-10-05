@@ -22,7 +22,7 @@ parameter [4:0] alu_nop = 5'd0,
                 alu_blts = 5'd13
                 alu_bltu = 5'd14,
                 alu_bges = 5'd15,
-                alu_bgeu = 5'd16,
+                alu_bgeu = 5'd16;
                 
 
 always_comb begin
