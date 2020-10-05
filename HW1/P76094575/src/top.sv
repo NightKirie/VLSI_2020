@@ -3,13 +3,6 @@ module top(
     input rst
 );
 
-always @(posedge clk, posedge rst) begin
-    if (rst) begin
-        
-    end
-    else begin
-        
-    end
-end
+
 
 endmodule

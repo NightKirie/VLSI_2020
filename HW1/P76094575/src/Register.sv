@@ -15,7 +15,7 @@ reg [31:0] reg_data [0:31];
 assign rr1_data[31:0] = reg_data[rr1_addr];
 assign rr2_data[31:0] = reg_data[rr2_addr];
 
-always @(posedge clk, posedge rst) begin
+always_ff @(posedge clk, posedge rst) begin
     if (rst) begin
         for (int i = 0; i < 32; i = i + 1) begin
             reg_data[i] <= 32'd0;
