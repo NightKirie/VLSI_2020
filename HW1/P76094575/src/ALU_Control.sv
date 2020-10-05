@@ -2,7 +2,7 @@ module ALU_Control (
     input [6:0] funct7,
     input [2:0] funct3,
     input [6:0] opcode,
-    output reg alu_ctrl
+    output reg [4:0] alu_ctrl
 );
 
 parameter [4:0] alu_nop = 5'd0,
@@ -13,15 +13,15 @@ parameter [4:0] alu_nop = 5'd0,
                 alu_slu = 5'd5,
                 alu_srs = 5'd6,
                 alu_sru = 5'd7,
-                alu_beq = 5'd8,
-                alu_bne = 5'd9,
-                alu_blts = 5'd10
-                alu_bltu = 5'd11,
-                alu_bges = 5'd12,
-                alu_bgeu = 5'd13,
-                alu_and = 5'd14,
-                alu_or = 5'd15,
-                alu_xor = 5'd16;
+                alu_and = 5'd8,
+                alu_or = 5'd9,
+                alu_xor = 5'd10,
+                alu_beq = 5'd11,
+                alu_bne = 5'd12,
+                alu_blts = 5'd13
+                alu_bltu = 5'd14,
+                alu_bges = 5'd15,
+                alu_bgeu = 5'd16,
 
 always_comb begin
     case({funt3, opcode})
