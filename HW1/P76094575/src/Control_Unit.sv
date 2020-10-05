@@ -2,8 +2,6 @@ module Control_Unit (
     input [6:0] opcode,
     /* 0: pc, 1: alu_out */
     output logic rd_src,  
-    /* 0: no branch, 1: branch */
-    output logic branch_en,
     /* 0: reg, 1: imm */
     output logic alu_in2_sel,
     /* 0: pc+4, 1: pc+imm */
@@ -25,7 +23,6 @@ always_comb begin
         /* R-type */
         7'b0110011:  begin
             rd_src = 1;         // alu_out     
-            branch_en = 0;      
             alu_in2_sel = 0;    // reg
             pc_src = 0;         // don't care
             wb_sel = 0;         // rd
@@ -37,7 +34,6 @@ always_comb begin
         /* I-type except LW, LB, JALR */
         7'b0010011: begin
             rd_src = 1;         // alu_out
-            branch_en = 0;
             alu_in2_sel = 1;    // imm
             pc_src = 0;         // don't care
             wb_sel = 0;         // rd
@@ -49,7 +45,6 @@ always_comb begin
         /* I-type LW, LB */
         7'b0000011: begin
             rd_src = 0;         // don't care
-            branch_en = 0;      
             alu_in2_sel = 1;    // imm
             pc_src = 0;         // don't care
             wb_sel = 1;         // DM
@@ -61,7 +56,6 @@ always_comb begin
         /* I-type JALR, J-type JAL */
         7'b1100111, 7'b1101111: begin
             rd_src = 0;         // pc
-            branch_en = 0;
             alu_in2_sel = 1;    // imm
             pc_src = 0;         // pc+4
             wb_sel = 0;         // rd
@@ -73,7 +67,6 @@ always_comb begin
         /* S-type */
         7'b0100011: begin
             rd_src = 1;         // don't care
-            branch_en = 0;      
             alu_in2_sel = 1;    // imm
             pc_src = 0;         // don't care
             wb_sel = 0;         // don't care
@@ -85,7 +78,6 @@ always_comb begin
         /* B-type */
         7'b1100011: begin
             rd_src = 0;         // pc
-            branch_en = 0;      
             alu_in2_sel = 1;    // imm
             pc_src = 1;         // pc+imm
             wb_sel = 0;         // rd
@@ -97,7 +89,6 @@ always_comb begin
         /* U-type AUIPC */
         7'b0010111: begin
             rd_src = 0;         // pc
-            branch_en = 0;      
             alu_in2_sel = 0;    // don't care
             pc_src = 1;         // pc+imm
             wb_sel = 0;         // rd
@@ -109,7 +100,6 @@ always_comb begin
         /* U-type LUI */
         7'b0110111: begin
             rd_src = 0;         // alu_out
-            branch_en = 0;      
             alu_in2_sel = 1;    // imm
             pc_src = 0;         // don't care
             wb_sel = 0;         // rd
@@ -121,7 +111,6 @@ always_comb begin
         /* J-type */
         7'b1101111: begin
             rd_src = 0;         // alu_out
-            branch_en = 0;      
             alu_in2_sel = 1;    // imm
             pc_src = 0;         // don't care
             wb_sel = 0;         // rd
@@ -132,7 +121,6 @@ always_comb begin
         end 
         default: begin
             rd_src = 0;         
-            branch_en = 0;
             alu_in2_sel = 0;    
             pc_src = 0;         
             wb_sel = 0;         
