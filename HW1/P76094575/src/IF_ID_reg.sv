@@ -5,7 +5,7 @@ module IF_ID_reg (
     input [31:0] pc_in,
     input [31:0] instr_in,
     output logic [31:0] pc_out,
-    output logic [31:0] instr_out,
+    output logic [31:0] instr_out
 );
 
 always_ff @(posedge clk, posedge rst) begin

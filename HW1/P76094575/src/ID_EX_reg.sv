@@ -1,8 +1,7 @@
-module moduleName (
+module ID_EX_reg (
     input clk,
     input rst,
     input rd_src_in,
-    input branch_en_in,
     input alu_in2_sel_in,
     input pc_src_in,
     input wb_sel_in,
@@ -19,7 +18,6 @@ module moduleName (
     input [31:0] imm_in,
     input [6:0] opcode_in,
     output logic rd_src_out,
-    output logic branch_en_out,
     output logic alu_in2_sel_out,
     output logic pc_src_out,
     output logic wb_sel_out,
@@ -40,7 +38,6 @@ module moduleName (
 always_ff @(posedge clk, posedge rst) begin
     if(rst) begin
         rd_src_out <= 0;
-        branch_en_out <= 0;
         alu_in2_sel_out <= 0;
         pc_src_out <= 0;
         wb_sel_out <= 0;
@@ -59,7 +56,6 @@ always_ff @(posedge clk, posedge rst) begin
     end
     else begin
         rd_src_out <= rd_src_in;
-        branch_en_out <= branch_en_in;
         alu_in2_sel_out <= alu_in2_sel_in;
         pc_src_out <= pc_src_in;
         wb_sel_out <= wb_sel_in;

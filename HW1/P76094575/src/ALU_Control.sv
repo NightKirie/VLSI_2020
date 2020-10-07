@@ -18,13 +18,13 @@ parameter [4:0] alu_nop = 5'd0,
                 alu_xor = 5'd10,
                 alu_beq = 5'd11,
                 alu_bne = 5'd12,
-                alu_blts = 5'd13
+                alu_blts = 5'd13,
                 alu_bltu = 5'd14,
                 alu_bges = 5'd15,
                 alu_bgeu = 5'd16;
 
 always_comb begin
-    case({funt3, opcode})
+    case({funct3, opcode})
         /* ADD, SUB */
         {3'b000, 7'b0110011},
         /* LW */

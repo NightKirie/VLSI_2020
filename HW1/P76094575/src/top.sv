@@ -6,26 +6,26 @@ module top(
     input rst
 );
 
+/* for im */
 wire [31:0] im_addr;
 wire [31:0] im_data_out;
-wire dm_output_en;
+/* for dm */
 wire dm_write_en;
 wire [31:0] dm_addr;
 wire [31:0] dm_data_in;
 wire [31:0] dm_data_out;
 
-CPU CPU1(
+CPU CPU_1(
     /* input */
     .clk(clk),
     .rst(rst),
+    .im_data_out(im_data_out),
+    .dm_data_out(dm_data_out),
+    /* output */
     .im_addr(im_addr),
-    .dm_output_en(dm_output_en),
     .dm_write_en(dm_write_en),
     .dm_addr(dm_addr),
-    .dm_data_in(dm_data_in),
-    /* output */
-    .im_data_out(im_data_out),
-    .dm_data_out(dm_data_out)
+    .dm_data_in(dm_data_in) 
 );
 
 SRAM_wrapper IM1(
@@ -44,7 +44,7 @@ SRAM_wrapper DM1(
     /* input */
     .CK(clk),
     .CS(1),
-    .OE(dm_output_en),
+    .OE(!dm_write_en), // if data write in, no need to output
     .WEB(dm_write_en),
     .A(dm_addr[15:2]),
     .DI(dm_data_in),

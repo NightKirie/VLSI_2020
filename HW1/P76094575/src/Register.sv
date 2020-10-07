@@ -24,8 +24,6 @@ always_ff @(posedge clk, posedge rst) begin
     else if (reg_w) begin
         reg_data[wr_addr] <= wd;
     end
-        
-    end
 end
     
 endmodule

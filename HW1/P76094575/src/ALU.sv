@@ -1,4 +1,4 @@
-module ALU_Control (
+module ALU (
     input [4:0] alu_ctrl,
     input [31:0] alu_in1,
     input [31:0] alu_in2,
@@ -19,7 +19,7 @@ parameter [4:0] alu_nop = 5'd0,
                 alu_xor = 5'd10,
                 alu_beq = 5'd11,
                 alu_bne = 5'd12,
-                alu_blts = 5'd13
+                alu_blts = 5'd13,
                 alu_bltu = 5'd14,
                 alu_bges = 5'd15,
                 alu_bgeu = 5'd16;
@@ -101,3 +101,5 @@ always_comb begin
         end
     endcase
 end
+
+endmodule

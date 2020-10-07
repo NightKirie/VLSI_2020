@@ -27,7 +27,6 @@ rtl0: | $(bld_dir)
 		echo "Cycle time shouldn't exceed 20"; \
 		exit 1; \
 	fi; \
-	make -C $(sim_dir)/prog0/; \
 	cd $(bld_dir); \
 	irun $(root_dir)/$(sim_dir)/top_tb.sv \
 	+incdir+$(root_dir)/$(src_dir)+$(root_dir)/$(inc_dir)+$(root_dir)/$(sim_dir) \
@@ -226,7 +225,6 @@ tar: check
 clean:
 	rm -rf $(bld_dir); \
 	rm -rf $(sim_dir)/prog*/result*.txt; \
-	make -C $(sim_dir)/prog0/ clean; \
 	make -C $(sim_dir)/prog1/ clean; \
 	make -C $(sim_dir)/prog2/ clean; \
 	make -C $(sim_dir)/prog3/ clean;

@@ -1,7 +1,7 @@
 module Branch_Control (
     input [6:0] opcode,
     input branch_flag,
-    output reg [1:0] branch_ctrl;
+    output logic [1:0] branch_ctrl
 );
 
 always_comb begin
