@@ -39,11 +39,13 @@ always_comb begin
         {3'b010, 7'b0100011},
         /* SB */
         {3'b000, 7'b0100011}: begin
-            if(funct7[5] == 0)
-                alu_ctrl = alu_add;    
+            /* only opcode = 7'b0110011 has sub */
+            if(funct7[5] == 1 && opcode == 7'b0110011)
+                alu_ctrl = alu_sub;    
             else 
-                alu_ctrl = alu_sub;
+                alu_ctrl = alu_add;
         end
+
         /* SLL */
         {3'b001, 7'b0110011},
         /* SLLI */

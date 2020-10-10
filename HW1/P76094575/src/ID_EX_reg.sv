@@ -1,6 +1,8 @@
 module ID_EX_reg (
     input clk,
     input rst,
+    input ID_EX_stall,
+    input ID_EX_flush,
     input rd_src_in,
     input alu_in2_sel_in,
     input pc_src_in,
@@ -35,15 +37,17 @@ module ID_EX_reg (
     output logic [6:0] opcode_out
 );
 
+logic flush_second_time;
+
 always_ff @(posedge clk, posedge rst) begin
     if(rst) begin
-        rd_src_out <= 0;
-        alu_in2_sel_out <= 0;
-        pc_src_out <= 0;
-        wb_sel_out <= 0;
-        reg_w_out <= 0;
-        mem_r_out <= 0;
-        mem_w_out <= 0;
+        rd_src_out <= 1'd0;
+        alu_in2_sel_out <= 1'd0;
+        pc_src_out <= 1'd0;
+        wb_sel_out <= 1'd0;
+        reg_w_out <= 1'd0;
+        mem_r_out <= 1'd0;
+        mem_w_out <= 1'd0;
         pc_out <= 32'd0;
         rr1_data_out <= 32'd0;
         rr2_data_out <= 32'd0;
@@ -53,8 +57,28 @@ always_ff @(posedge clk, posedge rst) begin
         alu_ctrl_out <= 5'd0;
         imm_out <= 32'd0;
         opcode_out <= 7'd0;
+        flush_second_time <= 1'b0;
     end
-    else begin
+    else if (ID_EX_flush || flush_second_time) begin
+        rd_src_out <= 1'd0;
+        alu_in2_sel_out <= 1'd0;
+        pc_src_out <= 1'd0;
+        wb_sel_out <= 1'd0;
+        reg_w_out <= 1'd0;
+        mem_r_out <= 1'd0;
+        mem_w_out <= 1'd0;
+        pc_out <= 32'd0;
+        rr1_data_out <= 32'd0;
+        rr2_data_out <= 32'd0;
+        rr1_addr_out <= 5'd0;
+        rr2_addr_out <= 5'd0;
+        wr_addr_out <= 5'd0;
+        alu_ctrl_out <= 5'd0;
+        imm_out <= 32'd0;
+        opcode_out <= 7'd0;
+        flush_second_time <= !flush_second_time;
+    end
+    else if(!ID_EX_stall) begin
         rd_src_out <= rd_src_in;
         alu_in2_sel_out <= alu_in2_sel_in;
         pc_src_out <= pc_src_in;

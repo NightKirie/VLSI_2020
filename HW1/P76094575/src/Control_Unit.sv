@@ -78,7 +78,7 @@ always_comb begin
         /* B-type */
         7'b1100011: begin
             rd_src = 0;         // pc
-            alu_in2_sel = 1;    // imm
+            alu_in2_sel = 0;    // reg
             pc_src = 1;         // pc+imm
             wb_sel = 0;         // rd
             imm_sel = 1;

@@ -10,7 +10,8 @@ module top(
 wire [31:0] im_addr;
 wire [31:0] im_data_out;
 /* for dm */
-wire dm_write_en;
+wire dm_output_en;
+wire [3:0] dm_write_en;
 wire [31:0] dm_addr;
 wire [31:0] dm_data_in;
 wire [31:0] dm_data_out;
@@ -23,6 +24,7 @@ CPU CPU_1(
     .dm_data_out(dm_data_out),
     /* output */
     .im_addr(im_addr),
+    .dm_output_en(dm_output_en),
     .dm_write_en(dm_write_en),
     .dm_addr(dm_addr),
     .dm_data_in(dm_data_in) 
@@ -44,7 +46,7 @@ SRAM_wrapper DM1(
     /* input */
     .CK(clk),
     .CS(1),
-    .OE(!dm_write_en), // if data write in, no need to output
+    .OE(1), // if data write in, no need to output
     .WEB(dm_write_en),
     .A(dm_addr[15:2]),
     .DI(dm_data_in),

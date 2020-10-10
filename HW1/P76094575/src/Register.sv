@@ -10,7 +10,7 @@ module Register (
     output logic [31:0] rr2_data
 );
 
-reg [31:0] reg_data [0:31];
+logic [31:0] reg_data [31:0];
 
 assign rr1_data[31:0] = reg_data[rr1_addr];
 assign rr2_data[31:0] = reg_data[rr2_addr];
@@ -22,7 +22,8 @@ always_ff @(posedge clk, posedge rst) begin
         end
     end
     else if (reg_w) begin
-        reg_data[wr_addr] <= wd;
+        if(wr_addr != 5'd0)
+            reg_data[wr_addr] <= wd;
     end
 end
     

@@ -64,14 +64,16 @@ always_comb begin
             out4 = in4;
             out5 = in5;
             out6 = in6;
+            out7 = in7;
         end
         1'b1: begin
-            out1 = 0;
-            out2 = 0;
-            out3 = 0;
-            out4 = 0;
-            out5 = 0;
-            out6 = 0;
+            out1 = 1'd0;
+            out2 = 1'd0;
+            out3 = 1'd0;
+            out4 = 1'd0;
+            out5 = 1'd0;
+            out6 = 1'd0;
+            out7 = 1'd0;
         end
     endcase
 end 

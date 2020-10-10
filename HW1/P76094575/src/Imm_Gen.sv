@@ -7,9 +7,9 @@ module Imm_Gen (
 always_comb begin
    if (imm_sel) begin
        /* I-type */
-       if (imm_in[6:0] == 7'b0000011 || imm_in[6:0] == 7'b0000011 || imm_in[6:0] == 7'b1100111) begin
+       if (imm_in[6:0] == 7'b0000011 || imm_in[6:0] == 7'b0010011 || imm_in[6:0] == 7'b1100111) begin
            /* SLLI, SRLI, SRAI */
-           if (imm_in[14:12] == 3'b001 && 3'b101) begin
+           if (imm_in[14:12] == 3'b001 && imm_in[14:12] == 3'b101) begin
                imm_out = {27'd0, imm_in[4:0]};
            end
            /* sign-extension */
