@@ -12,8 +12,8 @@ module Register (
 
 logic [31:0] reg_data [31:0];
 
-assign rr1_data[31:0] = reg_data[rr1_addr];
-assign rr2_data[31:0] = reg_data[rr2_addr];
+assign rr1_data[31:0] = (wr_addr == rr1_addr && wr_addr != 5'd0) ? wd : reg_data[rr1_addr];
+assign rr2_data[31:0] = (wr_addr == rr2_addr && wr_addr != 5'd0) ? wd : reg_data[rr2_addr];
 
 always_ff @(posedge clk, posedge rst) begin
     if (rst) begin
@@ -22,9 +22,11 @@ always_ff @(posedge clk, posedge rst) begin
         end
     end
     else if (reg_w) begin
+        /* keep $0 always be zero */
         if(wr_addr != 5'd0)
             reg_data[wr_addr] <= wd;
     end
 end
+
     
 endmodule

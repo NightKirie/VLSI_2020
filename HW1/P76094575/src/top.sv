@@ -7,6 +7,7 @@ module top(
 );
 
 /* for im */
+wire im_output_en;
 wire [31:0] im_addr;
 wire [31:0] im_data_out;
 /* for dm */
@@ -23,6 +24,7 @@ CPU CPU_1(
     .im_data_out(im_data_out),
     .dm_data_out(dm_data_out),
     /* output */
+    .im_output_en(im_output_en),
     .im_addr(im_addr),
     .dm_output_en(dm_output_en),
     .dm_write_en(dm_write_en),
@@ -34,7 +36,7 @@ SRAM_wrapper IM1(
     /* input */
     .CK(clk),
     .CS(1),
-    .OE(1),
+    .OE(im_output_en),
     .WEB(4'b1111),
     .A(im_addr[15:2]),
     .DI(32'd0),

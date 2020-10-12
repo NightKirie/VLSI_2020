@@ -75,9 +75,9 @@ always_comb begin
         /* SRLI, SRAI */
         {3'b101, 7'b0010011}: begin
             if(funct7[5] == 0)
-                alu_ctrl = alu_srs;    
+                alu_ctrl = alu_sru;    
             else 
-                alu_ctrl = alu_sru;
+                alu_ctrl = alu_srs;
         end
         /* OR */
         {3'b110, 7'b0110011},

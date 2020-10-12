@@ -99,7 +99,7 @@ always_comb begin
         end 
         /* U-type LUI */
         7'b0110111: begin
-            rd_src = 0;         // alu_out
+            rd_src = 1;         // alu_out
             alu_in2_sel = 1;    // imm
             pc_src = 0;         // don't care
             wb_sel = 0;         // rd

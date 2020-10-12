@@ -28,7 +28,7 @@ parameter [4:0] alu_nop = 5'd0,
 always_comb begin
     case(alu_ctrl)
         alu_nop: begin
-            alu_out = 32'd0;
+            alu_out = alu_in2;
             branch_flag = 32'd0;
         end 
         alu_add: begin
@@ -48,15 +48,15 @@ always_comb begin
             branch_flag = 32'd0;
         end
         alu_slu: begin
-            alu_out = alu_in1 << alu_in2;
+            alu_out = alu_in1 << alu_in2[4:0];
             branch_flag = 32'd0;
         end 
         alu_srs: begin
-            alu_out = $signed(alu_in1) >> alu_in2;
+            alu_out = $signed(alu_in1) >>> alu_in2[4:0];
             branch_flag = 32'd0;
         end 
         alu_sru: begin
-            alu_out = alu_in1 >> alu_in2;
+            alu_out = alu_in1 >> alu_in2[4:0];
             branch_flag = 32'd0;
         end 
         alu_and: begin
