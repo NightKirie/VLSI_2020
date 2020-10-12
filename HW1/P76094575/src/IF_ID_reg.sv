@@ -14,7 +14,10 @@ always_ff @(posedge clk, posedge rst) begin
         pc_out <= 32'd0;
         instr_out <= 32'd0;
     end
-    else if(!IF_ID_stall) begin
+    else if(IF_ID_stall) begin
+        instr_out <= instr_in;  
+    end
+    else begin
         pc_out <= pc_in; 
         instr_out <= instr_in;  
     end

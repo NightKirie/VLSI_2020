@@ -10,9 +10,9 @@ always_comb begin
     if(IM_flush) begin
         instr_out <= 32'd0;
     end
-    // else if(IM_stall) begin
-    //     instr_out <= instr_2;
-    // end
+    else if(IM_stall) begin
+        instr_out <= instr_2;
+    end
     else begin
         instr_out <= instr_1;
     end

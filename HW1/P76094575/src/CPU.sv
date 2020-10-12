@@ -167,7 +167,8 @@ wire rd_src,
      imm_sel, 
      reg_w, 
      mem_r,
-     mem_w;
+     mem_w,
+     disable_stall;
 Control_Unit Control_Unit_1(
     /* input */
     .opcode(IM_instr[6:0]),
@@ -179,7 +180,8 @@ Control_Unit Control_Unit_1(
     .imm_sel(imm_sel),
     .reg_w(reg_w),
     .mem_r(mem_r),
-    .mem_w(mem_w)
+    .mem_w(mem_w),
+    .disable_stall(disable_stall)
 );
 
 
@@ -248,7 +250,8 @@ wire ID_EX_reg_rd_src,
      ID_EX_reg_wb_sel, 
      ID_EX_reg_reg_w, 
      ID_EX_reg_mem_r,
-     ID_EX_reg_mem_w;
+     ID_EX_reg_mem_w,
+     ID_EX_reg_disable_stall;
 wire [31:0] ID_EX_reg_pc,
             ID_EX_reg_rr1_data,
             ID_EX_reg_rr2_data,
@@ -272,6 +275,7 @@ ID_EX_reg ID_EX_reg_1(
     .reg_w_in(reg_w),
     .mem_r_in(mem_r),
     .mem_w_in(mem_w),
+    .disable_stall_in(disable_stall),
     .pc_in(IF_ID_reg_pc),
     .rr1_data_in(Register_rr1_data),
     .rr2_data_in(Register_rr2_data),
@@ -290,6 +294,7 @@ ID_EX_reg ID_EX_reg_1(
     .reg_w_out(ID_EX_reg_reg_w),
     .mem_r_out(ID_EX_reg_mem_r),
     .mem_w_out(ID_EX_reg_mem_w),
+    .disable_stall_out(ID_EX_reg_disable_stall),
     .pc_out(ID_EX_reg_pc),
     .rr1_data_out(ID_EX_reg_rr1_data),
     .rr2_data_out(ID_EX_reg_rr2_data),
@@ -404,18 +409,28 @@ Branch_Control Branch_Control_1(
 
 /* Hazard Control */
 wire [4:0] EX_MEM_reg_rr1_addr;
+wire EX_MEM_stall, 
+     MEM_WB_stall, 
+     EX_MEM_reg_mem_r,
+     EX_MEM_reg_disable_stall;
 Hazard_Contorl Hazard_Contorl_1(
     /* input */
     .branch_ctrl(branch_ctrl),
-    .ID_EX_mem_r(ID_EX_reg_mem_r),
+    .ID_EX_mem_r(EX_MEM_reg_mem_r),
     .IF_ID_rr1_addr(IM_instr[19:15]),
     .IF_ID_rr2_addr(IM_instr[24:20]),
     .ID_EX_rr2_addr(ID_EX_reg_rr2_addr),
+    .EX_MEM_reg_disable_stall(EX_MEM_reg_disable_stall),
+    // .IF_ID_rr1_addr(ID_EX_reg_rr1_addr),
+    // .IF_ID_rr2_addr(ID_EX_reg_rr2_addr),
+    // .ID_EX_rr2_addr(EX_MEM_reg_rr2_addr),
     /* output */
     .PC_stall(PC_stall),
     .IM_stall(IM_stall),
     .IF_ID_stall(IF_ID_stall),    
     .ID_EX_stall(ID_EX_stall),
+    .EX_MEM_stall(EX_MEM_stall),
+    .MEM_WB_stall(MEM_WB_stall),
     .IM_flush(IM_flush),
     .IF_ID_flush(IF_ID_flush),
     .ID_EX_flush(ID_EX_flush)
@@ -426,7 +441,7 @@ Hazard_Contorl Hazard_Contorl_1(
 wire EX_MEM_reg_rd_src,
      EX_MEM_reg_wb_sel,
      EX_MEM_reg_reg_w,
-     EX_MEM_reg_mem_r,
+     //EX_MEM_reg_mem_r,
      EX_MEM_reg_mem_w;
 wire [6:0] EX_MEM_reg_opcode;
 wire [2:0] EX_MEM_reg_funct3;
@@ -438,11 +453,13 @@ EX_MEM_reg EX_MEM_reg_1(
     /* input */
     .clk(clk),
     .rst(rst),
+    .EX_MEM_stall(EX_MEM_stall),
     .rd_src_in(ID_EX_reg_rd_src),
     .wb_sel_in(ID_EX_reg_wb_sel),
     .reg_w_in(ID_EX_reg_reg_w),
     .mem_r_in(ID_EX_reg_mem_r),
     .mem_w_in(ID_EX_reg_mem_w),
+    .disable_stall_in(ID_EX_reg_disable_stall),
     .pc_in(Pc_Src_Mux_pc),
     .alu_in(ALU_alu_out),
     .rr1_addr_in(ID_EX_reg_rr1_addr),
@@ -457,6 +474,7 @@ EX_MEM_reg EX_MEM_reg_1(
     .reg_w_out(EX_MEM_reg_reg_w),
     .mem_r_out(EX_MEM_reg_mem_r),
     .mem_w_out(EX_MEM_reg_mem_w),
+    .disable_stall_out(EX_MEM_reg_disable_stall),
     .pc_out(EX_MEM_reg_pc),
     .alu_out(dm_addr),
     .rr1_addr_out(EX_MEM_reg_rr1_addr),
@@ -529,6 +547,7 @@ MEM_WB_reg MEM_WB_reg_1(
     /* input */
     .clk(clk),
     .rst(rst),
+    .MEM_WB_stall(MEM_WB_stall),
     .wb_sel_in(EX_MEM_reg_wb_sel),
     .reg_w_in(EX_MEM_reg_reg_w),
     .rd_data_in(Rd_Src_Mux_data),

@@ -1,6 +1,7 @@
 module MEM_WB_reg (
     input clk,
     input rst,
+    input MEM_WB_stall,
     input wb_sel_in,
     input reg_w_in,
     input [31:0] rd_data_in,
@@ -21,7 +22,7 @@ always_ff @(posedge clk, posedge rst) begin
         rb_data_out <= 32'd0;
         wr_addr_out <= 32'd0;
     end
-    else begin
+    else if(!MEM_WB_stall) begin
         wb_sel_out <= wb_sel_in;
         reg_w_out <= reg_w_in;
         rd_data_out <= rd_data_in;

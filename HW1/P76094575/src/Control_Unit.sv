@@ -15,7 +15,8 @@ module Control_Unit (
     /* 0: no DM read, 1: DM read */
     output logic mem_r,
     /* 0: no DM write, 1: DM write */
-    output logic mem_w
+    output logic mem_w,
+    output logic disable_stall
 );
 
 always_comb begin
@@ -30,6 +31,7 @@ always_comb begin
             reg_w = 1;          
             mem_r = 0;          
             mem_w = 0;
+            disable_stall = 0;
         end 
         /* I-type except LW, LB, JALR */
         7'b0010011: begin
@@ -41,6 +43,7 @@ always_comb begin
             reg_w = 1;
             mem_r = 0;
             mem_w = 0;
+            disable_stall = 0;
         end  
         /* I-type LW, LB */
         7'b0000011: begin
@@ -52,6 +55,7 @@ always_comb begin
             reg_w = 1;
             mem_r = 1;
             mem_w = 0;
+            disable_stall = 1;
         end 
         /* I-type JALR, J-type JAL */
         7'b1100111, 7'b1101111: begin
@@ -63,6 +67,7 @@ always_comb begin
             reg_w = 1;
             mem_r = 0;
             mem_w = 0;  
+            disable_stall = 0;
         end
         /* S-type */
         7'b0100011: begin
@@ -74,6 +79,7 @@ always_comb begin
             reg_w = 0;
             mem_r = 0;
             mem_w = 1;  
+            disable_stall = 0;
         end
         /* B-type */
         7'b1100011: begin
@@ -85,6 +91,7 @@ always_comb begin
             reg_w = 0;
             mem_r = 0;
             mem_w = 0;  
+            disable_stall = 0;
         end
         /* U-type AUIPC */
         7'b0010111: begin
@@ -96,6 +103,7 @@ always_comb begin
             reg_w = 1;
             mem_r = 0;
             mem_w = 0;
+            disable_stall = 0;
         end 
         /* U-type LUI */
         7'b0110111: begin
@@ -107,6 +115,7 @@ always_comb begin
             reg_w = 1;
             mem_r = 0;
             mem_w = 0; 
+            disable_stall = 0;
         end
         /* J-type */
         7'b1101111: begin
@@ -118,6 +127,7 @@ always_comb begin
             reg_w = 1;
             mem_r = 0;
             mem_w = 0;    
+            disable_stall = 0;
         end 
         default: begin
             rd_src = 0;         
@@ -128,6 +138,7 @@ always_comb begin
             reg_w = 0;
             mem_r = 0;
             mem_w = 0;
+            disable_stall = 0;
         end 
     endcase
 end

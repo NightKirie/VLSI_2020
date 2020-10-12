@@ -10,6 +10,7 @@ module ID_EX_reg (
     input reg_w_in,
     input mem_r_in,
     input mem_w_in,
+    input disable_stall_in,
     input [31:0] pc_in,
     input [31:0] rr1_data_in,
     input [31:0] rr2_data_in,
@@ -27,6 +28,7 @@ module ID_EX_reg (
     output logic reg_w_out,
     output logic mem_r_out,
     output logic mem_w_out,
+    output logic disable_stall_out,
     output logic [31:0] pc_out,
     output logic [31:0] rr1_data_out,
     output logic [31:0] rr2_data_out,
@@ -50,6 +52,7 @@ always_ff @(posedge clk, posedge rst) begin
         reg_w_out <= 1'd0;
         mem_r_out <= 1'd0;
         mem_w_out <= 1'd0;
+        disable_stall_out <= 1'd0;
         pc_out <= 32'd0;
         rr1_data_out <= 32'd0;
         rr2_data_out <= 32'd0;
@@ -70,6 +73,7 @@ always_ff @(posedge clk, posedge rst) begin
         reg_w_out <= 1'd0;
         mem_r_out <= 1'd0;
         mem_w_out <= 1'd0;
+        disable_stall_out <= 1'd0;
         pc_out <= 32'd0;
         rr1_data_out <= 32'd0;
         rr2_data_out <= 32'd0;
@@ -83,25 +87,25 @@ always_ff @(posedge clk, posedge rst) begin
         flush_second_time <= !flush_second_time;
     end
     else if(ID_EX_stall) begin    
-        rd_src_out <= 1'd0;
-        alu_in2_sel_out <= 1'd0;
-        pc_src_out <= 1'd0;
-        wb_sel_out <= 1'd0;
-        reg_w_out <= 1'd0;
-        mem_r_out <= 1'd0;
-        mem_w_out <= 1'd0;
-        // pc_out <= 32'd0;
-        // rr1_data_out <= 32'd0;
-        // rr2_data_out <= 32'd0;
-        // rr1_addr_out <= 5'd0;
-        // rr2_addr_out <= 5'd0;
-        // wr_addr_out <= 5'd0;
-        alu_ctrl_out <= 5'd0;
-        // imm_out <= 32'd0;
-        opcode_out <= 7'd0;
-        funct3_out <= 3'd0;
+        // rd_src_out <= 1'd0;
+        // alu_in2_sel_out <= 1'd0;
+        // pc_src_out <= 1'd0;
+        // wb_sel_out <= 1'd0;
+        // reg_w_out <= 1'd0;
+        // mem_w_out <= 1'd0;
+        // //disable_stall_out <= 1'd0;
+        // // pc_out <= 32'd0;
+        // // rr1_data_out <= 32'd0;
+        // // rr2_data_out <= 32'd0;
+        // // rr1_addr_out <= 5'd0;
+        // // rr2_addr_out <= 5'd0;
+        // // wr_addr_out <= 5'd0;
+        // alu_ctrl_out <= 5'd0;
+        // // imm_out <= 32'd0;
+        // opcode_out <= 7'd0;
+        // funct3_out <= 3'd0;
     end
-    else begin
+    else if(!ID_EX_stall) begin
         rd_src_out <= rd_src_in;
         alu_in2_sel_out <= alu_in2_sel_in;
         pc_src_out <= pc_src_in;
@@ -109,6 +113,7 @@ always_ff @(posedge clk, posedge rst) begin
         reg_w_out <= reg_w_in;
         mem_r_out <= mem_r_in;
         mem_w_out <= mem_w_in;
+        disable_stall_out <= disable_stall_in;
         pc_out <= pc_in;
         rr1_data_out <= rr1_data_in;
         rr2_data_out <= rr2_data_in;
