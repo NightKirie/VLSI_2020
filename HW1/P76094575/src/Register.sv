@@ -10,10 +10,10 @@ module Register (
     output logic [31:0] rr2_data
 );
 
-logic [31:0] reg_data [31:0];
+logic [31:0] reg_data [0:31];
 
-assign rr1_data[31:0] = (wr_addr == rr1_addr && wr_addr != 5'd0) ? wd : reg_data[rr1_addr];
-assign rr2_data[31:0] = (wr_addr == rr2_addr && wr_addr != 5'd0) ? wd : reg_data[rr2_addr];
+assign rr1_data[31:0] = (wr_addr == rr1_addr && wr_addr != 5'd0 && reg_w) ? wd : reg_data[rr1_addr];
+assign rr2_data[31:0] = (wr_addr == rr2_addr && wr_addr != 5'd0 && reg_w) ? wd : reg_data[rr2_addr];
 
 always_ff @(posedge clk, posedge rst) begin
     if (rst) begin

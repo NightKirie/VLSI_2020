@@ -23,7 +23,7 @@ always_comb begin
        end
        /* B-type */
        else if (imm_in[6:0] == 7'b1100011) begin
-           imm_out = {19'd0, imm_in[31], imm_in[7], imm_in[30:25], imm_in[11:8], 1'd0};
+           imm_out = {{20{imm_in[31]}}, imm_in[7], imm_in[30:25], imm_in[11:8], 1'd0};
        end
        /* U-type */
        else if (imm_in[6:0] == 7'b0010111 || imm_in[6:0] == 7'b0110111) begin

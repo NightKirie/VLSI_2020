@@ -2,6 +2,7 @@ module EX_MEM_reg (
     input clk,
     input rst,
     input EX_MEM_stall,
+    input EX_MEM_flush,
     input rd_src_in,
     input wb_sel_in,
     input reg_w_in,
@@ -16,6 +17,7 @@ module EX_MEM_reg (
     input [4:0] wr_addr_in,
     input [6:0] opcode_in,
     input [2:0] funct3_in,
+    input [1:0] branch_flag_in,
     output logic rd_src_out,
     output logic wb_sel_out,
     output logic reg_w_out,
@@ -29,11 +31,12 @@ module EX_MEM_reg (
     output logic [31:0] rr2_data_out,
     output logic [4:0] wr_addr_out,
     output logic [6:0] opcode_out,
-    output logic [2:0] funct3_out
+    output logic [2:0] funct3_out,
+    output logic [1:0] branch_flag_out
 );
     
 always_ff @(posedge clk, posedge rst) begin
-    if(rst) begin
+    if(rst || EX_MEM_flush) begin
         rd_src_out <= 0;
         wb_sel_out <= 0;
         reg_w_out <= 0;
@@ -48,6 +51,7 @@ always_ff @(posedge clk, posedge rst) begin
         wr_addr_out <= 5'd0;
         opcode_out <= 7'd0;
         funct3_out <= 3'd0;
+        branch_flag_out <= 2'd0;
     end
     else if(EX_MEM_stall) begin
         disable_stall_out <= 1'd0;
@@ -67,6 +71,7 @@ always_ff @(posedge clk, posedge rst) begin
         wr_addr_out <= wr_addr_in;
         opcode_out <= opcode_in;
         funct3_out <= funct3_in;
+        branch_flag_out <= branch_flag_in;
     end
 end
 

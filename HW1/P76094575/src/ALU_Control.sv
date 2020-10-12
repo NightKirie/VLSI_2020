@@ -88,7 +88,7 @@ always_comb begin
         /* AND */
         {3'b111, 7'b0110011},
         /* ANDI */
-        {3'b111, 7'b0110011}: begin
+        {3'b111, 7'b0010011}: begin
             alu_ctrl = alu_and;    
         end
         /* BEQ */
