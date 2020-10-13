@@ -21,9 +21,7 @@ module CPU (
     input rst,
     input [31:0] im_data_out,
     input [31:0] dm_data_out,
-    output im_output_en,
     output [31:0] im_addr,
-    output dm_output_en,
     output [3:0] dm_write_en,
     output [31:0] dm_addr,
     output [31:0] dm_data_in
@@ -77,35 +75,18 @@ Add4 IF_PC_Add_4(
 
 /* Mux before PC */
 /* input */
-wire [31:0] PC_Mux_rr1_imm,
-            PC_Mux_pc_imm;
+wire [31:0] EX_MEM_reg_pc_add_imm;
 wire [1:0] branch_ctrl;
 Mux_3_1 PC_Mux(
     /* input */
     .in1(IF_PC_Add_4_pc_out),
-    .in2(PC_Mux_rr1_imm),
-    .in3(PC_Mux_pc_imm),
+    .in2(dm_addr),
+    .in3(EX_MEM_reg_pc_add_imm),
     .sel(branch_ctrl),
     /* output */
     .out(PC_pc_in)
 );
 
-/* Mux after IM */
-/* input */
-wire IM_flush;
-wire IM_stall;
-/* output */
-wire [31:0] IM_instr;
-// Mux_2_1 IM_Mux_1(
-//     /* input */
-//     .in1(im_data_out),
-//     .in2(32'd0),
-//     .sel(IM_flush),
-//     /* output */
-//     .out(IM_instr)
-// );
-
-assign im_output_en = 1;
 /* IF_ID_reg */
 /* input */
 wire IF_ID_stall;
@@ -126,6 +107,12 @@ IF_ID_reg IF_ID_reg_1(
     .instr_out(IF_ID_reg_instr_out)
 );
 
+/* Mux after IM */
+/* input */
+wire IM_flush;
+wire IM_stall;
+/* output */
+wire [31:0] IM_instr;
 IM_Mux IM_Mux_1(
     /* input */
     .instr_1(im_data_out),
@@ -207,37 +194,6 @@ ALU_Control ALU_Control_1(
     /* output */
     .alu_ctrl(alu_ctrl)
 );
-
-// /* Mux after Control Unit */
-// /* input */
-// wire Control_Unit_flush;
-// /* output */
-// wire rd_src_mux, 
-//      alu_in2_sel_mux, 
-//      pc_src_mux,
-//      wb_sel_mux, 
-//      reg_w_mux, 
-//      mem_r_mux,
-//      mem_w_mux;
-// Mux_7_7 Control_Unit_Mux(
-//     /* input */
-//     .in1(rd_src),
-//     .in2(alu_in2_sel),
-//     .in3(pc_src),
-//     .in4(wb_sel),
-//     .in5(reg_w),
-//     .in6(mem_r),
-//     .in7(mem_w),
-//     .sel(Control_Unit_flush),
-//     /* output */
-//     .out1(rd_src_mux),
-//     .out2(alu_in2_sel_mux),
-//     .out3(pc_src_mux),
-//     .out4(wb_sel_mux),
-//     .out5(reg_w_mux),
-//     .out6(mem_r_mux),
-//     .out7(mem_w_mux)
-// );
 
 /* ID_EX_reg */
 /* input */
@@ -365,9 +321,6 @@ ALU ALU_1(
     .branch_flag(ALU_branch_flag)
 );
 
-assign PC_Mux_rr1_imm = ALU_alu_out;
-
-
 /* PC+4 in EX */
 /* output */
 wire [31:0] EX_PC_Add_4_pc_out;
@@ -379,6 +332,8 @@ Add4 EX_PC_Add_4(
 );
 
 /* PC+imm in EX */
+/* output */
+wire [31:0] PC_Mux_pc_imm;
 Add_1_1 EX_PC_Add_Imm(
     /* input */
     .in1(ID_EX_reg_pc),
@@ -399,63 +354,24 @@ Mux_2_1 Pc_Src_Mux(
     .out(Pc_Src_Mux_pc)
 );
 
-/* Branch Control */
-wire [1:0] EX_MEM_reg_branch_flag;
-wire [6:0] EX_MEM_reg_opcode;
-Branch_Control Branch_Control_1(
-    /* input */
-    .opcode(ID_EX_reg_opcode),
-    .branch_flag(ALU_branch_flag),
-    /* output */
-    .branch_ctrl(branch_ctrl)
-);
-
-/* Hazard Control */
-wire [4:0] EX_MEM_reg_rr1_addr,
-           EX_MEM_reg_rr2_addr;
-wire EX_MEM_stall, 
-     MEM_WB_stall, 
-     EX_MEM_flush,
-     EX_MEM_reg_mem_r,
-     EX_MEM_reg_disable_stall;
-Hazard_Contorl Hazard_Contorl_1(
-    /* input */
-    .branch_ctrl(branch_ctrl),
-    .ID_EX_mem_r(EX_MEM_reg_mem_r),
-    // .IF_ID_rr1_addr(IM_instr[19:15]),
-    // .IF_ID_rr2_addr(IM_instr[24:20]),
-    // .ID_EX_rr2_addr(ID_EX_reg_rr2_addr),
-    .IF_ID_rr1_addr(ID_EX_reg_rr1_addr),
-    .IF_ID_rr2_addr(ID_EX_reg_rr2_addr),
-    .ID_EX_rr2_addr(EX_MEM_reg_rr2_addr),
-    .EX_MEM_reg_disable_stall(EX_MEM_reg_disable_stall),
-    /* output */
-    .PC_stall(PC_stall),
-    .IM_stall(IM_stall),
-    .IF_ID_stall(IF_ID_stall),    
-    .ID_EX_stall(ID_EX_stall),
-    .EX_MEM_stall(EX_MEM_stall),
-    .MEM_WB_stall(MEM_WB_stall),
-    .IM_flush(IM_flush),
-    .IF_ID_flush(IF_ID_flush),
-    .ID_EX_flush(ID_EX_flush),
-    .EX_MEM_flush(EX_MEM_flush)
-);
 
 /* EX_MEM_reg */
 /* output */
-wire EX_MEM_reg_rd_src,
+wire EX_MEM_stall,
+     EX_MEM_flush,
+     EX_MEM_reg_rd_src,
      EX_MEM_reg_wb_sel,
      EX_MEM_reg_reg_w,
-     //EX_MEM_reg_mem_r,
-     EX_MEM_reg_mem_w;
-
+     EX_MEM_reg_mem_r,
+     EX_MEM_reg_mem_w,
+     EX_MEM_reg_disable_stall;
 wire [2:0] EX_MEM_reg_funct3;
 wire [31:0] EX_MEM_reg_pc,
             EX_MEM_reg_rr2_data;
-wire [4:0] //EX_MEM_reg_rr2_addr,
-           EX_MEM_reg_wr_addr;
-
+wire [4:0] EX_MEM_reg_wr_addr,
+           EX_MEM_reg_rr2_addr;
+wire [1:0] EX_MEM_reg_branch_flag;
+wire [6:0] EX_MEM_reg_opcode;
 EX_MEM_reg EX_MEM_reg_1(
     /* input */
     .clk(clk),
@@ -470,13 +386,13 @@ EX_MEM_reg EX_MEM_reg_1(
     .disable_stall_in(ID_EX_reg_disable_stall),
     .pc_in(Pc_Src_Mux_pc),
     .alu_in(ALU_alu_out),
-    .rr1_addr_in(ID_EX_reg_rr1_addr),
     .rr2_addr_in(ID_EX_reg_rr2_addr),
     .rr2_data_in(RR2_Data_Mux_alu_in2),
     .wr_addr_in(ID_EX_reg_wr_addr),
     .opcode_in(ID_EX_reg_opcode),
     .funct3_in(ID_EX_reg_funct3),
     .branch_flag_in(ALU_branch_flag),
+    .pc_add_imm_in(PC_Mux_pc_imm),
     /* output */
     .rd_src_out(EX_MEM_reg_rd_src),
     .wb_sel_out(EX_MEM_reg_wb_sel),
@@ -486,16 +402,17 @@ EX_MEM_reg EX_MEM_reg_1(
     .disable_stall_out(EX_MEM_reg_disable_stall),
     .pc_out(EX_MEM_reg_pc),
     .alu_out(dm_addr),
-    .rr1_addr_out(EX_MEM_reg_rr1_addr),
     .rr2_addr_out(EX_MEM_reg_rr2_addr),
     .rr2_data_out(EX_MEM_reg_rr2_data),
     .wr_addr_out(EX_MEM_reg_wr_addr),
     .opcode_out(EX_MEM_reg_opcode),
     .funct3_out(EX_MEM_reg_funct3),
-    .branch_flag_out(EX_MEM_reg_branch_flag)
+    .branch_flag_out(EX_MEM_reg_branch_flag),
+    .pc_add_imm_out(EX_MEM_reg_pc_add_imm)
 );
 
-assign dm_output_en = (EX_MEM_reg_mem_r) ? 1 : 0;
+
+/* Generate data for DM write in */
 /* input */
 wire [31:0] w_data_out;
 DM_Write_Gen DM_Write_Gen_1(
@@ -509,7 +426,36 @@ DM_Write_Gen DM_Write_Gen_1(
     .write_data(dm_data_in)
 );
 
+/* Branch Control */
 
+Branch_Control Branch_Control_1(
+    /* input */
+    .opcode(EX_MEM_reg_opcode),
+    .branch_flag(EX_MEM_reg_branch_flag),
+    /* output */
+    .branch_ctrl(branch_ctrl)
+);
+
+/* Hazard Control */
+/* input */
+wire MEM_WB_stall; 
+Hazard_Contorl Hazard_Contorl_1(
+    /* input */
+    .branch_ctrl(branch_ctrl),
+    .EX_MEM_mem_r(EX_MEM_reg_mem_r),
+    .EX_MEM_reg_disable_stall(EX_MEM_reg_disable_stall),
+    /* output */
+    .PC_stall(PC_stall),
+    .IM_stall(IM_stall),
+    .IF_ID_stall(IF_ID_stall),    
+    .ID_EX_stall(ID_EX_stall),
+    .EX_MEM_stall(EX_MEM_stall),
+    .MEM_WB_stall(MEM_WB_stall),
+    .IM_flush(IM_flush),
+    .IF_ID_flush(IF_ID_flush),
+    .ID_EX_flush(ID_EX_flush),
+    .EX_MEM_flush(EX_MEM_flush)
+);
 
 /* Mux for choose pc or alu for forwarding */
 Mux_2_1 Rd_Src_Mux(
@@ -524,7 +470,6 @@ Mux_2_1 Rd_Src_Mux(
 /* Mux for w_data forwarding or not */
 /* input */
 wire forward_w_data;
-
 Mux_2_1 W_Data_Mux(
     /* input */
     .in1(EX_MEM_reg_rr2_data),
@@ -534,12 +479,16 @@ Mux_2_1 W_Data_Mux(
     .out(w_data_out)
 );
 
+/* For LW & LB */
 wire [31:0] LW_LB_dm_data = (EX_MEM_reg_funct3 == 3'b000) ? {{24{dm_data_out[7]}}, dm_data_out[7:0]} : dm_data_out;
 
+/* If DM read, need to forward data */
 Mux_2_1 Rd_Rb_DM_Mux(
+    /* input */
     .in1(Rd_Src_Mux_data),
     .in2(LW_LB_dm_data),
     .sel(EX_MEM_reg_mem_r),
+    /* output */
     .out(rd_rb_dm_forward_data)
 );
 
@@ -561,6 +510,7 @@ Forward_Control Forward_Control_1(
 );
 
 /* MEM_WB_reg */
+/* input */
 wire MEM_WB_reg_wb_sel;
 wire [31:0] MEM_WB_reg_rd_data,
             MEM_WB_reg_rb_data;

@@ -11,13 +11,13 @@ module EX_MEM_reg (
     input disable_stall_in,
     input [31:0] pc_in,
     input [31:0] alu_in,
-    input [4:0] rr1_addr_in,
     input [4:0] rr2_addr_in,
     input [31:0] rr2_data_in,
     input [4:0] wr_addr_in,
     input [6:0] opcode_in,
     input [2:0] funct3_in,
     input [1:0] branch_flag_in,
+    input [31:0] pc_add_imm_in,
     output logic rd_src_out,
     output logic wb_sel_out,
     output logic reg_w_out,
@@ -26,13 +26,13 @@ module EX_MEM_reg (
     output logic disable_stall_out,
     output logic [31:0] pc_out,
     output logic [31:0] alu_out,
-    output logic [4:0] rr1_addr_out,
     output logic [4:0] rr2_addr_out,
     output logic [31:0] rr2_data_out,
     output logic [4:0] wr_addr_out,
     output logic [6:0] opcode_out,
     output logic [2:0] funct3_out,
-    output logic [1:0] branch_flag_out
+    output logic [1:0] branch_flag_out,
+    output logic [31:0] pc_add_imm_out
 );
     
 always_ff @(posedge clk, posedge rst) begin
@@ -45,13 +45,13 @@ always_ff @(posedge clk, posedge rst) begin
         disable_stall_out <= 1'd0;
         pc_out <= 32'd0;
         alu_out <= 32'd0;
-        rr1_addr_out <= 5'd0;
         rr2_addr_out <= 5'd0;
         rr2_data_out <= 32'd0;
         wr_addr_out <= 5'd0;
         opcode_out <= 7'd0;
         funct3_out <= 3'd0;
         branch_flag_out <= 2'd0;
+        pc_add_imm_out <= 32'd0;
     end
     else if(EX_MEM_stall) begin
         disable_stall_out <= 1'd0;
@@ -65,13 +65,13 @@ always_ff @(posedge clk, posedge rst) begin
         disable_stall_out <= disable_stall_in;
         pc_out <= pc_in;
         alu_out <= alu_in;
-        rr1_addr_out <= rr1_addr_in;
         rr2_addr_out <= rr2_addr_in;
         rr2_data_out <= rr2_data_in;
         wr_addr_out <= wr_addr_in;
         opcode_out <= opcode_in;
         funct3_out <= funct3_in;
         branch_flag_out <= branch_flag_in;
+        pc_add_imm_out <= pc_add_imm_in;
     end
 end
 
