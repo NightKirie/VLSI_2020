@@ -40,7 +40,7 @@ always_comb begin
         /* SB */
         {3'b000, 7'b0100011}: begin
             /* only opcode = 7'b0110011 has sub */
-            if(funct7[5] == 1 && opcode == 7'b0110011)
+            if(funct7[5] == 1'b1 && opcode == 7'b0110011)
                 alu_ctrl = alu_sub;    
             else 
                 alu_ctrl = alu_add;
@@ -74,7 +74,7 @@ always_comb begin
         {3'b101, 7'b0110011},
         /* SRLI, SRAI */
         {3'b101, 7'b0010011}: begin
-            if(funct7[5] == 0)
+            if(funct7[5] == 1'b0)
                 alu_ctrl = alu_sru;    
             else 
                 alu_ctrl = alu_srs;

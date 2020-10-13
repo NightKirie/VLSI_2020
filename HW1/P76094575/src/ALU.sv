@@ -29,75 +29,75 @@ always_comb begin
     case(alu_ctrl)
         alu_nop: begin
             alu_out = alu_in2;
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end 
         alu_add: begin
             alu_out = alu_in1 + alu_in2;
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end
         alu_sub: begin
             alu_out = alu_in1 - alu_in2;
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end 
         alu_slts: begin
             alu_out = ($signed(alu_in1) < $signed(alu_in2)) ? 1 : 0;
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end
         alu_sltu: begin
             alu_out = (alu_in1 < alu_in2) ? 1 : 0;
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end
         alu_slu: begin
             alu_out = alu_in1 << alu_in2[4:0];
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end 
         alu_srs: begin
             alu_out = $signed(alu_in1) >>> alu_in2[4:0];
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end 
         alu_sru: begin
             alu_out = alu_in1 >> alu_in2[4:0];
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end 
         alu_and: begin
             alu_out = alu_in1 & alu_in2;
-            branch_flag = 0;
+            branch_flag = 1'b0;
         end 
         alu_or: begin
             alu_out = alu_in1 | alu_in2;
-            branch_flag = 0;
+            branch_flag = 1'b0;
         end 
         alu_xor: begin
             alu_out = alu_in1 ^ alu_in2;
-            branch_flag = 0;
+            branch_flag = 1'b0;
         end 
         alu_beq: begin
-            alu_out = 0;
-            branch_flag = (alu_in1 == alu_in2) ? 1 : 0;
+            alu_out = 32'd0;
+            branch_flag = (alu_in1 == alu_in2) ? 1'b1 : 1'b0;
         end 
         alu_bne: begin
-            alu_out = 0;
-            branch_flag = (alu_in1 != alu_in2) ? 1 : 0;
+            alu_out = 32'd0;
+            branch_flag = (alu_in1 != alu_in2) ? 1'b1 : 1'b0;
         end 
         alu_blts: begin
-            alu_out = 0;
-            branch_flag = ($signed(alu_in1) < $signed(alu_in2)) ? 1 : 0;
+            alu_out = 32'd0;
+            branch_flag = ($signed(alu_in1) < $signed(alu_in2)) ? 1'b1 : 1'b0;
         end
         alu_bltu: begin
-            alu_out = 0;
-            branch_flag = (alu_in1 < alu_in2) ? 1 : 0;
+            alu_out = 32'd0;
+            branch_flag = (alu_in1 < alu_in2) ? 1'b1 : 1'b0;
         end
         alu_bges: begin
-            alu_out = 0;
-            branch_flag = ($signed(alu_in1) >= $signed(alu_in2)) ? 1 : 0;
+            alu_out = 32'd0;
+            branch_flag = ($signed(alu_in1) >= $signed(alu_in2)) ? 1'b1 : 1'b0;
         end
         alu_bgeu: begin
-            alu_out = 0;
-            branch_flag = (alu_in1 >= alu_in2) ? 1 : 0;
+            alu_out = 32'd0;
+            branch_flag = (alu_in1 >= alu_in2) ? 1'b1 : 1'b0;
         end
         default: begin
             alu_out = 32'd0;
-            branch_flag = 32'd0;
+            branch_flag = 1'b0;
         end
     endcase
 end

@@ -10,9 +10,13 @@ module IF_ID_reg (
 );
 
 always_ff @(posedge clk, posedge rst) begin
-    if(rst || IF_ID_flush) begin
+    if(rst) begin
         pc_out <= 32'd0;
         instr_out <= 32'd0;
+    end
+    else if(IF_ID_flush) begin
+	pc_out <= 32'd0;
+	instr_out <= 32'd0;
     end
     else if(!IF_ID_stall) begin
         pc_out <= pc_in; 

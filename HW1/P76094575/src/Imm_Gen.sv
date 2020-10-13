@@ -31,7 +31,7 @@ always_comb begin
        end
        /* J-type */
        else if (imm_in[6:0] == 7'b1101111) begin
-           imm_out = {{20{imm_in[31]}}, imm_in[19:12], imm_in[20], imm_in[30:21], 1'd0};
+           imm_out = {{12{imm_in[31]}}, imm_in[19:12], imm_in[20], imm_in[30:21], 1'd0};
        end
        else begin
            imm_out = 32'd0;

@@ -16,7 +16,7 @@ module EX_MEM_reg (
     input [4:0] wr_addr_in,
     input [6:0] opcode_in,
     input [2:0] funct3_in,
-    input [1:0] branch_flag_in,
+    input branch_flag_in,
     input [31:0] pc_add_imm_in,
     output logic rd_src_out,
     output logic wb_sel_out,
@@ -31,18 +31,18 @@ module EX_MEM_reg (
     output logic [4:0] wr_addr_out,
     output logic [6:0] opcode_out,
     output logic [2:0] funct3_out,
-    output logic [1:0] branch_flag_out,
+    output logic branch_flag_out,
     output logic [31:0] pc_add_imm_out
 );
     
 always_ff @(posedge clk, posedge rst) begin
-    if(rst || EX_MEM_flush) begin
-        rd_src_out <= 0;
-        wb_sel_out <= 0;
-        reg_w_out <= 0;
-        mem_r_out <= 0;
-        mem_w_out <= 0;
-        disable_stall_out <= 1'd0;
+    if(rst) begin
+        rd_src_out <= 1'b0;
+        wb_sel_out <= 1'b0;
+        reg_w_out <= 1'b0;
+        mem_r_out <= 1'b0;
+        mem_w_out <= 1'b0;
+        disable_stall_out <= 1'b0;
         pc_out <= 32'd0;
         alu_out <= 32'd0;
         rr2_addr_out <= 5'd0;
@@ -50,7 +50,24 @@ always_ff @(posedge clk, posedge rst) begin
         wr_addr_out <= 5'd0;
         opcode_out <= 7'd0;
         funct3_out <= 3'd0;
-        branch_flag_out <= 2'd0;
+        branch_flag_out <= 1'b0;
+        pc_add_imm_out <= 32'd0;
+    end
+    else if(EX_MEM_flush) begin
+    	rd_src_out <= 1'b0;
+        wb_sel_out <= 1'b0;
+        reg_w_out <= 1'b0;
+        mem_r_out <= 1'b0;
+        mem_w_out <= 1'b0;
+        disable_stall_out <= 1'b0;
+        pc_out <= 32'd0;
+        alu_out <= 32'd0;
+        rr2_addr_out <= 5'd0;
+        rr2_data_out <= 32'd0;
+        wr_addr_out <= 5'd0;
+        opcode_out <= 7'd0;
+        funct3_out <= 3'd0;
+        branch_flag_out <= 1'b0;
         pc_add_imm_out <= 32'd0;
     end
     else if(EX_MEM_stall) begin

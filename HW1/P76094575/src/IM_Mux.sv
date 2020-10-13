@@ -8,13 +8,13 @@ module IM_Mux (
 
 always_comb begin
     if(IM_flush) begin
-        instr_out <= 32'd0;
+        instr_out = 32'd0;
     end
     else if(IM_stall) begin
-        instr_out <= instr_2;
+        instr_out = instr_2;
     end
     else begin
-        instr_out <= instr_1;
+        instr_out = instr_1;
     end
 end
 

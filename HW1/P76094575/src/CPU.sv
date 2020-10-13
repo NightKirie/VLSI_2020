@@ -1,8 +1,10 @@
-`include "Adder.sv"
+`include "Add4.sv"
+`include "Add_1_1.sv"
 `include "ALU_Control.sv"
 `include "ALU.sv"
 `include "Branch_Control.sv"
 `include "Control_Unit.sv"
+`include "DM_Read_Gen.sv"
 `include "DM_Write_Gen.sv"
 `include "EX_MEM_reg.sv"
 `include "Forward_Control.sv"
@@ -12,7 +14,8 @@
 `include "IM_Mux.sv"
 `include "Imm_Gen.sv"
 `include "MEM_WB_reg.sv"
-`include "Mux.sv"
+`include "Mux_2_1.sv"
+`include "Mux_3_1.sv"
 `include "PC.sv"
 `include "Register.sv"
 
@@ -21,9 +24,9 @@ module CPU (
     input rst,
     input [31:0] im_data_out,
     input [31:0] dm_data_out,
-    output [31:0] im_addr,
+    output [13:0] im_addr,
     output [3:0] dm_write_en,
-    output [31:0] dm_addr,
+    output [13:0] dm_addr,
     output [31:0] dm_data_in
 );
     
@@ -50,8 +53,8 @@ parameter [4:0] alu_nop = 5'd0,
 /* PC */
 /* input */
 wire [31:0] PC_pc_in;
-wire PC_stall;
 wire [31:0] PC_pc_out;
+wire PC_stall;
 PC PC_1(
     /* input */
     .clk(clk),
@@ -59,16 +62,17 @@ PC PC_1(
     .PC_stall(PC_stall),
     .pc_in(PC_pc_in),
     /* output */
-    .pc_out(im_addr)
+    .pc_out(PC_pc_out)
 );
 
+assign im_addr = PC_pc_out[15:2];
 
 /* PC+4 in IF */
 /* output */
 wire [31:0] IF_PC_Add_4_pc_out;
 Add4 IF_PC_Add_4(
     /* input */
-    .in(im_addr),
+    .in(PC_pc_out),
     /* output */
     .out(IF_PC_Add_4_pc_out)
 );
@@ -77,15 +81,18 @@ Add4 IF_PC_Add_4(
 /* input */
 wire [31:0] EX_MEM_reg_pc_add_imm;
 wire [1:0] branch_ctrl;
+wire [31:0] EX_MEM_reg_alu_out;
 Mux_3_1 PC_Mux(
     /* input */
     .in1(IF_PC_Add_4_pc_out),
-    .in2(dm_addr),
+    .in2(EX_MEM_reg_alu_out),
     .in3(EX_MEM_reg_pc_add_imm),
     .sel(branch_ctrl),
     /* output */
     .out(PC_pc_in)
 );
+
+assign dm_addr = EX_MEM_reg_alu_out[15:2];
 
 /* IF_ID_reg */
 /* input */
@@ -100,7 +107,7 @@ IF_ID_reg IF_ID_reg_1(
     .rst(rst),
     .IF_ID_stall(IF_ID_stall),
     .IF_ID_flush(IF_ID_flush),
-    .pc_in(im_addr),
+    .pc_in(PC_pc_out),
     .instr_in(im_data_out),
     /* output */
     .pc_out(IF_ID_reg_pc),
@@ -364,13 +371,13 @@ wire EX_MEM_stall,
      EX_MEM_reg_reg_w,
      EX_MEM_reg_mem_r,
      EX_MEM_reg_mem_w,
-     EX_MEM_reg_disable_stall;
+     EX_MEM_reg_disable_stall,
+     EX_MEM_reg_branch_flag;
 wire [2:0] EX_MEM_reg_funct3;
 wire [31:0] EX_MEM_reg_pc,
             EX_MEM_reg_rr2_data;
 wire [4:0] EX_MEM_reg_wr_addr,
            EX_MEM_reg_rr2_addr;
-wire [1:0] EX_MEM_reg_branch_flag;
 wire [6:0] EX_MEM_reg_opcode;
 EX_MEM_reg EX_MEM_reg_1(
     /* input */
@@ -401,7 +408,7 @@ EX_MEM_reg EX_MEM_reg_1(
     .mem_w_out(EX_MEM_reg_mem_w),
     .disable_stall_out(EX_MEM_reg_disable_stall),
     .pc_out(EX_MEM_reg_pc),
-    .alu_out(dm_addr),
+    .alu_out(EX_MEM_reg_alu_out),
     .rr2_addr_out(EX_MEM_reg_rr2_addr),
     .rr2_data_out(EX_MEM_reg_rr2_data),
     .wr_addr_out(EX_MEM_reg_wr_addr),
@@ -418,7 +425,7 @@ wire [31:0] w_data_out;
 DM_Write_Gen DM_Write_Gen_1(
     /* input */
     .funct3(EX_MEM_reg_funct3),
-    .alu(dm_addr),
+    .alu(EX_MEM_reg_alu_out),
     .data(w_data_out),
     .mem_w(EX_MEM_reg_mem_w),
     /* output */
@@ -439,7 +446,7 @@ Branch_Control Branch_Control_1(
 /* Hazard Control */
 /* input */
 wire MEM_WB_stall; 
-Hazard_Contorl Hazard_Contorl_1(
+Hazard_Control Hazard_Control_1(
     /* input */
     .branch_ctrl(branch_ctrl),
     .EX_MEM_mem_r(EX_MEM_reg_mem_r),
@@ -458,10 +465,12 @@ Hazard_Contorl Hazard_Contorl_1(
 );
 
 /* Mux for choose pc or alu for forwarding */
+/* input */
+
 Mux_2_1 Rd_Src_Mux(
     /* input */
     .in1(EX_MEM_reg_pc),
-    .in2(dm_addr),
+    .in2(EX_MEM_reg_alu_out),
     .sel(EX_MEM_reg_rd_src),
     /* output */
     .out(Rd_Src_Mux_data)
@@ -480,7 +489,17 @@ Mux_2_1 W_Data_Mux(
 );
 
 /* For LW & LB */
-wire [31:0] LW_LB_dm_data = (EX_MEM_reg_funct3 == 3'b000) ? {{24{dm_data_out[7]}}, dm_data_out[7:0]} : dm_data_out;
+wire [31:0] LW_LB_dm_data;
+DM_Read_Gen DM_Read_Gen_1(
+    /* input */
+    .funct3(EX_MEM_reg_funct3),
+    .mem_r(EX_MEM_reg_mem_r),
+    .pc(Rd_Src_Mux_data),
+    .data(dm_data_out),
+    /* output */
+    .read_data(LW_LB_dm_data)
+); 
+//assign LW_LB_dm_data= (EX_MEM_reg_funct3 == 3'b000) ? {{24{dm_data_out[7]}}, dm_data_out[7:0]} : dm_data_out;
 
 /* If DM read, need to forward data */
 Mux_2_1 Rd_Rb_DM_Mux(

@@ -11,16 +11,16 @@ module MEM_WB_reg (
     output logic reg_w_out,
     output logic [31:0] rd_data_out,
     output logic [31:0] rb_data_out,
-    output logic [31:0] wr_addr_out
+    output logic [4:0] wr_addr_out
 );
 
 always_ff @(posedge clk, posedge rst) begin
     if(rst) begin
-        wb_sel_out <= 0;
-        reg_w_out <= 0;
+        wb_sel_out <= 1'b0;
+        reg_w_out <= 1'b0;
         rd_data_out <= 32'd0;
         rb_data_out <= 32'd0;
-        wr_addr_out <= 32'd0;
+        wr_addr_out <= 5'd0;
     end
     else if(!MEM_WB_stall) begin
         wb_sel_out <= wb_sel_in;
